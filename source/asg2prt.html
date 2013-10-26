@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0070)http://ugweb.cs.ualberta.ca/~c379/W08/schedule/Assignments/asg2_p.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+
+
+  
+  
+  
+  <title>CMPUT 379 Assignment 2 http protocol</title>
+</head>
+
+
+<body>
+
+
+
+
+<center style="font-family: Helvetica,Arial,sans-serif;">
+<h1>CMPUT 379, Assignment 2, HTTP Protocol</h1>
+
+
+
+</center>
+
+The simplified HTTP 1.1 protocol for this assignment is relatively
+straightforward. The server must listen on the desired port, and
+service an HTTP 1.1 connection each time a client connects to it. The
+client is expected to send a request,
+and the server must send either a successful response, or an error
+response. For your assignment, your server is only required to
+implement the GET request and response, with a few key error messages
+in certain situations. HTTP requests and replies are quite simple, they
+consist of multiple
+lines, where each line is terminated by a line feed (\n) OR a carriage
+return and linefeed together (\r\n). A request, or reply, consists of:
+
+<ul>
+
+
+
+ 
+  <li> An initial line (The request, or the response code)
+  </li>
+
+
+
+  <li> Zero or more header lines (Header: Header Value)
+  </li>
+
+
+
+  <li> A blank line (\n, or \r\n on a line by itself)
+  </li>
+
+
+
+  <li> Optional message data (in your case, the contents of a file, or an error message)
+  </li>
+
+
+
+</ul>
+
+
+
+
+
+A <span style="font-weight: bold;">request</span> will come from the client as multiple lines of input, and look 
+like this:
+
+<pre><tt>GET /someplace/file.html HTTP/1.1<br>From: someuser@somewhere.org<br>User-Agent: Bloatzilla/7.0<br>[blank line here]<br></tt></pre>
+
+
+
+This is a request from the client to obtain the file "<span style="font-family: monospace;">someplace/file.html</span>"
+inside
+the document directory specified on startup. The only part of the
+request
+your program need worry about is the GET line, and then discard
+everything
+up to, and including, the blank like at the end of the request. (you
+must however, notice that the request is correctly terminated by a
+blank line).
+Notice also that the leading slash "/" character in the GET request
+refers to the&nbsp; directory of where the documents are stored (it is
+<span style="font-style: italic;">not</span> the root directory of the&nbsp;filesystem). In this sense, the file
+names in the GET request are relative to the server's documents
+directory. So, if for example your server's documents directory is
+<span style="font-family: monospace;">/some/where/documents</span> then the request in the above example is for the document
+<span style="font-family: monospace;">/some/where/documents/someplace/file.html</span> <br>
+
+
+<br>
+
+
+Note that on GET requests, for the purposes of this assignment your server may
+ignore all the header data on the requests. You will need to correctly test
+that the request is terminated by a blank line. 
+<br>
+
+<br>
+
+
+Notice that because of its compatibility with the HTTP/1.1 protocol,
+your servers should be able to cope just fine with requests sent by
+your browser of choice. That is, you should be able to test your
+servers by using any respectable web browser out there. For example,
+assuming you are using the browser on the same host that your server is
+running, the request can be sent by the following
+URL:&nbsp;<span style="font-family: monospace;">http://localhost:PORT/someplace/file.html</span> where PORT is the
+port on which your server is listening.<br>
+
+
+
+<br>
+
+
+
+Assuming the server can send the file "<span style="font-family: monospace;">someplace/file.html</span>" the following <span style="font-weight: bold;">response</span> will be sent to the client:
+
+<pre><tt>HTTP/1.1 200 OK<br>Date: Mon, 21 Jan 2008 18:06:16 GMT<br>Content-Type: text/html<br>Content-Length: 1234<br><br>This is the contents of file.html<br>it would continue for exactly 1234 bytes<br></tt></pre>
+
+
+
+
+
+Your server can always return "<span style="font-family: monospace;">Content-type: text/html</span>" - it must
+return the correct Date, and Content-Length header on all replies.  
+There is a blank line between the end of the headers and the start of
+the file.
+
+Your server may assume that anything after the GET and the leading /
+in the request is the name of a file to be retrieved - You do NOT need
+to support any arguments for CGI scripting or any other strange things
+you may have knowledge of in HTTP - All your server need do is serve
+up files with GET, and you may safely assume that all valid requests
+will start with GET, have a path to a file starting with a leading /,
+and then end with HTTP/1.1. A Get with multiple things
+between the GET and the HTTP/1.1 can be considered a Bad Request as
+below.
+<p>
+ If the server receives a request it does not understand (Anything not
+a GET request, or not ending in " HTTP/1.1")
+It must return a BAD REQUEST error, which can look exactly like this:
+
+</p>
+
+
+
+<pre>HTTP/1.1 400 Bad Request<br>Date: Mon, 21 Jan 2008 18:06:16 GMT<br>Content-Type: text/html<br>Content-Length: 107<br><br>&lt;html&gt;&lt;body&gt;<br>&lt;h2&gt;Malformed Request&lt;/h2&gt;<br>Your browser sent a request I could not understand.<br>&lt;/body&gt;&lt;/html&gt;<br></pre>
+
+
+
+
+
+If the server receives a request for a file that does exist, it must return
+a Not Found error - which can look exactly like this:
+
+<tt>
+<pre>HTTP/1.1 404 Not Found<br>Date: Mon, 21 Jan 2008 18:06:16 GMT<br>Content-Type: text/html<br>Content-Length: 117<br><br>&lt;html&gt;&lt;body&gt;<br>&lt;h2&gt;Document not found&lt;/h2&gt;<br>You asked for a document that doesn't exist. That is so sad.<br>&lt;/body&gt;&lt;/html&gt;<br></pre>
+
+
+
+</tt>If the server receives a request for a file that is not permitted
+to be read, it must return a Forbidden error - which can look exactly
+like this:
+<tt></tt>
+<pre><tt>HTTP/1.1 403 Forbidden<br>Date: Mon, 21 Jan 2008 18:06:16 GMT<br>Content-Type: text/html<br>Content-Length: 130<br><br>&lt;html&gt;&lt;body&gt;<br>&lt;h2&gt;Permission Denied&lt;/h2&gt;<br>You asked for a document you are not permitted to see. It sucks to be you.<br>&lt;/body&gt;&lt;/html&gt;<br></tt></pre>
+
+
+
+
+
+If the server has some sort of unplanned error while servicing a
+request, it must attempt to return a Server Error message - which can
+look exactly like this:
+
+<tt></tt>
+<pre><tt>HTTP/1.1 500 Internal Server Error<br>Date: Mon, 21 Jan 2008 18:06:16 GMT<br>Content-Type: text/html<br>Content-Length: 131<br><br>&lt;html&gt;&lt;body&gt;<br>&lt;h2&gt;Oops. That Didn't work&lt;/h2&gt;<br>I had some sort of problem dealing with your request. Sorry, I'm lame.<br>&lt;/body&gt;&lt;/html&gt;<br></tt></pre>
+
+
+
+
+
+
+A more full implementation of the HTTP 1.1 protocol is possible, but
+not required for this assignment. For more background reading on the HTTP 1.1 see
+<a href="http://www.jmarshall.com/easy/http/">HTTP Made Really Easy</a>. 
+just remember that you are <em>NOT</em> expected to implement the entire HTTP 1.1 protocol in your server, only GET for files and error handling
+as outlined above. 
+
+<p>Note also that except for browsers, you can also test your server by using telnet to connect to your server's
+port, and typing in the HTTP request manually. ie. <tt>telnet localhost 9990</tt>
+</p>
+
+
+
+
+
+
+</body></html>

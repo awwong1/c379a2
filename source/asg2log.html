@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0070)http://ugweb.cs.ualberta.ca/~c379/W08/schedule/Assignments/asg2_l.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+
+  
+  
+  <title>CMPUT 379 Assignment 2 Log format</title>
+</head>
+
+
+<body>
+
+
+
+<center>
+<h1><span style="font-family: Helvetica,Arial,sans-serif;"> CMPUT 379, Assignment 2, Log Format</span> </h1>
+
+
+</center>
+
+<p>
+Your server must log successful and failed requests in a specific format. 
+</p>
+
+
+<p>
+A request is successful when the client asks for a file, the file is
+found and successfully written<span style="font-style: italic;"> in it's entirety</span> to the socket that
+the client is connected on. 
+</p>
+
+
+<p>
+Anything else happening is an error. 
+</p>
+
+
+<p>
+For each request, the time of the request must be recorded as it is
+completed (successfully or not), as well as what happened, this can be
+"<span style="font-family: monospace;">200 OK </span>BYTES_WRITTEN/TOTAL_BYTES" for a file send, or the HTTP error
+code for other errors. Note that this means that if the client
+disconnects before the entire file can be written out on the socket,
+BYTES_WRITTEN may be less that TOTAL_BYTES which would be the size of
+the file.
+</p>
+
+
+<p>
+Log format must be:
+</p>
+
+
+<pre><tt>
+Date[tab]Client IP address[tab]request line[tab]response code
+</tt></pre>
+
+
+
+
+Note that [tab] is the ASCII character whose value is 9.
+So the log must look something like this
+<pre><tt>
+Mon, 21 Jan 2008 18:06:16 GMT	129.128.11.43	GET /fluffy.html HTTP/1.0	400 Bad Request
+Mon, 21 Jan 2008 18:06:16 GMT	129.128.11.43	GET /fluffy.html HTTP/1.1	200 OK 1435/1435
+Mon, 21 Jan 2008 18:06:23 GMT	198.103.98.25	GET /something.html HTTP/1.1	403 Forbidden
+Mon, 21 Jan 2008 18:18:20 GMT	129.128.41.238	GET /noexist.html HTTP/1.1	404 Not Found
+Mon, 21 Jan 2008 18:18:45 GMT	12.110.110.204	GET /goodstuff.html HTTP/1.1	500 Internal Server Error
+Mon, 21 Jan 2008 18:29:33 GMT	129.128.11.43	GET /silly.html HTTP/1.1	200 OK 4096/11435
+</tt></pre>
+
+
+
+
+
+</body></html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+  
+  
+
+
+  
+  
+  <title>CMPUT 379 Assignment 2</title>
+</head>
+
+
+<body>
+
+
+
+<center>
+<h1><span style="font-family: Helvetica,Arial,sans-serif;"> CMPUT 379,&nbsp; Assignment 2, Fall 2013</span><br>
+
+</h1>
+
+
+</center>
+
+
+
+
+
+<center>Due Sunday, Oct 27 (submit by&nbsp;11:59pm)<br>
+
+(threads &amp; processes, IPC, sockets, synchronization)<br>
+
+<br>
+
+</center>
+
+<h2><span style="font-family: Helvetica,Arial,sans-serif;">Objective</span></h2>
+
+<p>
+For this assignment you will implement a small simplified web server
+which implements a minimal subset of the HTTP 1.1 protocol. Your task
+is to both implement this web server, in three different ways, and to
+discuss some comparisons of your implementation.  This assignment
+will expose you to many issues related to writing daemons and network
+servers. 
+</p>
+
+
+<p>
+The web server is started with three command line arguments - the first 
+is the TCP port it will listen for, and accept connections on for service.
+The second is a directory in which the server serves up documents from. 
+the third is a log file in which the server logs all transactions
+with all clients. 
+</p>
+
+
+<h4 style="font-family: Helvetica,Arial,sans-serif;">The Web Servers</h4>
+
+
+
+<p>
+You must implement three servers. <strong style="font-family: monospace;">server_f</strong>,<span style="font-family: monospace;"> </span><strong style="font-family: monospace;">server_p</strong><span style="font-family: monospace;"></span>, and <strong style="font-family: monospace;">server_s</strong>. Each
+server is invoked in exactly the same way. An example invocation:
+
+</p>
+
+
+<pre><tt>
+server_f 8000 /some/where/documents /some/where/logfile
+</tt></pre>
+
+
+
+
+would invoke&nbsp;<span style="font-family: monospace;">server_f </span>listening on the local machine on port 8000, serving
+up documents from the directory <span style="font-family: monospace;">/some/where/documents</span>, and logging transactions to <span style="font-family: monospace;">/some/where/logfile</span>
+
+<ul>
+
+
+
+  <li> Servers must properly <em>daemonize</em> on startup.
+  </li>
+
+
+  <li> The servers should place no limit on the size of file they can send to the client. 
+  </li>
+
+
+  <li><strong style="font-family: monospace;">server_f</strong> must be implemented using processes and
+    <tt>fork(). </tt>That is, <span style="font-family: monospace;">server_f</span> must fork a child process to service
+each request it gets from the network.
+  </li>
+
+
+  <li><strong style="font-family: monospace;">server_p</strong> must be implemented using
+    <tt>pthreads</tt>. In <span style="font-family: monospace;">server_p</span>&nbsp;each request from the network must be
+serviced in a different posix thread. 
+  </li>
+
+
+  <li><strong style="font-family: monospace;">server_s</strong> must be implemented in one process
+    <em>without</em> using threads and <span style="font-style: italic;">without</span> forking a child for each request it gets from the network. Instead, <span style="font-family: monospace;">server_s</span> should use <tt>poll()</tt> or
+    <tt>select()</tt> keeping track of the state of each connection to
+handle all the network requests in one process.
+  </li>
+
+
+</ul>
+
+
+
+<p>
+The servers all accept and respond to client requests as documented
+<a href="http://bofh.srv.ualberta.ca/beck/c379/asg2_p.html">here</a>
+</p>
+
+
+<p>
+The server log all connections to themselves as documented
+<a href="http://bofh.srv.ualberta.ca/beck/c379/asg2_l.html">here</a>
+
+</p>
+
+
+<h2 style="font-family: Helvetica,Arial,sans-serif;">Questions</h2>
+
+
+	Imagine you were using your assignment as a basis for a web
+server you were going to implement into production use. You may
+consider any kind of application a web server is used on, from a
+Desktop PC, an ISP providing web services for many customers, all the way to
+an embedded device with limited resources. You may consider the
+possible extended features such a device might require (or not
+require), and you may do a little bit of research on the Internet. There are
+no right and wrong answers here, we are looking for answers which demonstrate
+your understanding of how each implementation works in conjunction with
+the operating system.    
+
+<ul>
+
+  <li><strong>Question 0</strong> What server did you find easiest to
+implement, and hardest to implement, and why? - describe the challenges
+you faced in implementing each one.
+  </li>
+
+  <li><strong>Question 1</strong> When might it be advantageous (on
+what type of system) to use the design of <span style="font-family: monospace;">server_f</span> instead of <span style="font-family: monospace;">server_p</span>,
+and vice versa. Explain your answer and provide some evidence for your
+statements. </li>
+
+  <li><strong>Question 2</strong> When would it be advantageous (on
+what type of system) to use the design of <span style="font-family: monospace;">server_p</span> instead of <span style="font-family: monospace;">server_s</span>,
+and vice versa. Explain your answer and provide some evidence for your
+statements.
+  </li>
+
+</ul>
+
+<h2 style="font-family: Helvetica,Arial,sans-serif;">Marking</h2>
+
+This assignment will be marked out of 100 marks.
+<ul>
+
+  <li>Your <span style="font-family: monospace;">server_f</span> implementation will be worth 30 marks
+  </li>
+
+  <li>Your <span style="font-family: monospace;">server_p</span> implementation will be worth 30 marks
+  </li>
+
+  <li>Your <span style="font-family: monospace;">server_s</span> implementation will be worth 25 marks
+  </li>
+
+  <li>Your answers to the questions will be worth 15 marks.</li>
+
+</ul>
+
+<br>
+
+<table style="background-color: rgb(255, 255, 204); width: 50%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="0" cellspacing="0">
+
+
+  <tbody>
+
+    <tr>
+
+      <td><span style="font-weight: bold; color: rgb(204, 0, 0);">Important:</span> <b>Always remember to remove from your machine the
+running server daemon(s) before logging off.</b> <span style="font-weight: bold;">Generally, make sure
+there are no stray processes left on your machine before leaving.
+This kind of negligence and lack of courtesy will be punished with
+mark deductions.</span></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<h2 style="font-family: Helvetica,Arial,sans-serif;">Deliverables</h2>
+
+Your programs must be written exclusively in C. C++ idioms will be
+penalized. Consistent and readable C coding style is very important to
+spotting
+bugs and having your code readable by others. Your coding style should
+comply with the code style standards documented <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=style">here.</a>
+ Some (but not all) important highlights
+from this which will be relevant for you are:
+<ul>
+<li>indentation is an 8 space TAB
+</li><li>NO line may be longer than 80 chars.
+</li><li>secondary indentation (for long lines) is four spaces.
+</li><li>Tab should be used in place of all 8 spaces. (i.e. do not
+indent a block 3 deep with 24 space characters - use three tabs)
+</li><li>all functions are prototyped
+</li><li>all variables are declared at the start of a block
+</li><li>C style comments must be used (not C++ style)
+</li></ul>
+
+If you find that the 8 space tab and 80 column width means you are
+constrained and end up with blocks indented to the far right of your screen,
+that is <em>actually the point</em> of this. If you are nested that
+deep, either your code logic is getting too complex and you're either barking
+up the wrong tree, or you should refactor some of it (like putting
+some stuff into a function, etc. This style may be painful at first
+but it will make you a better C programmer.
+<p>
+You must deliver the code for the three servers, as well as a <span style="font-family: monospace;">Makefile</span>
+to build them all, where the command "<span style="font-family: monospace;">make all</span>" will build all three
+servers.
+</p>
+
+
+<p>
+
+The answers to the questions must be in a file named "<span style="font-family: monospace;">questions.txt</span>"
+and are limited to an <strong>absolute maximum</strong> of <strong>500
+words</strong> as determined by the <tt>wc -w</tt> command in the lab
+- Answers longer than 500 words <strong>WILL NOT BE MARKED</strong>
+This means that before you submit "<span style="font-family: monospace;">questions.txt</span>" run <tt>wc -w
+questions.txt</tt> - if the number you see is bigger than 500, your
+answers are too long and you need to shorten them.
+
+</p>
+
+
+<p>
+The exact way of submitting your solutions will be explained by the TA's
+ in the lab and on eclass. At this stage of your CS education,
+you are expected to deliver good quality code, which is easy to read
+and comprehend. The quality of your code will be marked.</p>
+
+<p style="text-align: center;">*************** 
+
+
+</p>
+
+<br>
+
+<span style="font-weight: bold;"></span>
+
+
+
+
+</body></html>
